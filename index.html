@@ -85,18 +85,18 @@
     <div id="step-evaluation" class="card hidden">
         <h3>メッセージの印象について</h3>
         
-        <p style="margin-top: 15px; font-weight: bold;">1. 受取ったメッセージの直感的な印象を選んでください。</p>
+        <p style="margin-top: 15px; font-weight: bold;">1. メッセージを読んだ直後の印象として、あなたはこのメッセージを好意的に受け取れましたか？</p>
         <div class="radio-scale-group">
-            <label><input type="radio" name="impression" value="1"> 1: 非常にネガティブ</label>
-            <label><input type="radio" name="impression" value="2"> 2: ややネガティブ</label>
-            <label><input type="radio" name="impression" value="3"> 3: どちらかと言えばネガティブ</label>
+            <label><input type="radio" name="impression" value="1"> 1: 全く好意的に受け取れない</label>
+            <label><input type="radio" name="impression" value="2"> 2: あまり好意的に受け取れない</label>
+            <label><input type="radio" name="impression" value="3"> 3: どちらかと言えば好意的に受け取れない</label>
             <label><input type="radio" name="impression" value="4"> 4: どちらでもない</label>
-            <label><input type="radio" name="impression" value="5"> 5: どちらかと言えばポジティブ</label>
-            <label><input type="radio" name="impression" value="6"> 6: ややポジティブ</label>
-            <label><input type="radio" name="impression" value="7"> 7: 非常にポジティブ</label>
+            <label><input type="radio" name="impression" value="5"> 5: どちらかと言えば好意的に受け取れる</label>
+            <label><input type="radio" name="impression" value="6"> 6: やや好意的に受け取れる</label>
+            <label><input type="radio" name="impression" value="7"> 7: 非常に好意的に受け取れる</label>
         </div>
 
-        <p style="margin-top: 20px; font-weight: bold;">2. 相手はどのような意図で送信したと思いますか？</p>
+        <p style="margin-top: 20px; font-weight: bold;">2. 相手はどのような意図でメッセージを送信したと思いますか？</p>
         <div class="radio-scale-group">
             <label><input type="radio" name="intent" value="1"> 1: 強い悪意・皮肉</label>
             <label><input type="radio" name="intent" value="2"> 2: やや悪意・皮肉がある</label>
@@ -169,7 +169,7 @@
         <p style="font-size: 11px; color: #777; margin-top: -8px; margin-bottom: 15px; border-left: 2px solid #ccc; padding-left: 8px;">
             ※本研究では、Liebowitz Social Anxiety Scale 日本語版（LSAS-J; 朝倉ほか, 2002）を使用しています。
         </p>
-        
+
         <div id="lsas-questions"></div>
 
         <button type="button" onclick="finishExperiment()">実験を終了してデータを送信する</button>
