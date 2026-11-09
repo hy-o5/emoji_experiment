@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>テキストコミュニケーションに関する意識調査</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ステップ0: オープニング画面 -->
+    <div id="step-opening" class="card">
+        <h2 style="text-align: center;">テキストコミュニケーションに関する<br>意識調査</h2>
+        <p style="text-align: center;">本調査にごアクセスいただき、ありがとうございます。</p>
+        <p style="text-align: center;">本実験は、LINEなど、デジタル上でのテキストコミュニケーションにおけるメッセージの受け止め方や印象について調べることを目的とした認知心理学の研究です。</p>
+        
+        <div style="background-color: #f8f9fa; padding: 14px; border-radius: 8px; margin: 15px 0; font-size: 14px; line-height: 1.6; border: 1px solid #e9ecef;">
+            <p style="margin: 0 0 8px 0;"><strong>【研究内容とプライバシーについて】</strong></p>
+            <ul style="padding-left: 20px; margin: 0;">
+                <li><strong>所要時間：</strong> 約 7~10 分程度（全27試行）</li>
+                <li><strong>完全匿名性：</strong> 回答内容はすべて統計的に処理され、個人が特定されることは一切ありません。</li>
+            </ul>
+        </div>
+
+        <p style="text-align: center; font-size: 13px; color: #666;">上記内容をご確認いただき、ご協力いただける場合は下のボタンを押して調査にお進みください。</p>
+
+        <button type="button" onclick="startSurvey()">調査を開始する（基本情報の入力へ）</button>
+    </div>
+
+    <!-- ステップ1: 被験者情報 -->
+    <div id="step-demographics" class="card hidden">
+        <h2>基本情報</h2>
+        <form id="demographic-form">
+            <div style="margin-bottom: 20px;">
+                <label style="margin-right: 15px;">年齢：
+                    <input type="number" id="age" required min="18" max="99" style="width: 70px; padding: 6px;"> 歳
+                </label>
+                
+                <label>性別：
+                    <select id="gender" required style="padding: 6px;">
+                        <option value="">選択してください</option>
+                        <option value="female">女性</option>
+                        <option value="male">男性</option>
+                        <option value="other">その他・回答しない</option>
+                    </select>
+                </label>
+            </div>
+            <button type="button" onclick="goToInstruction()">実験説明へ進む</button>
+        </form>
+    </div>
+
+    <!-- ステップ2: 送信者のイメージ＆親密度事前評価 -->
+    <div id="step-instruction" class="card hidden">
+        <h2 id="block-title">実験のご案内</h2>
+        <div id="block-instruction-text" style="font-size: 14px; line-height: 1.6; margin-bottom: 15px;"></div>
+        
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e9ecef; margin-bottom: 20px;">
+            <p style="font-weight: bold; margin-top: 0;" id="relation-question-title">この人物と、普段どのくらい親しいですか？（1: 全く親しくない 〜 7: 非常に親しい）</p>
+            <div class="radio-scale-group" id="relation-scale-container" style="background: white;">
+                <label><input type="radio" name="subjective_intimacy" value="1"> 1: 全く親しくない</label>
+                <label><input type="radio" name="subjective_intimacy" value="2"> 2: あまり親しくない</label>
+                <label><input type="radio" name="subjective_intimacy" value="3"> 3: どちらかと言えば親しくない</label>
+                <label><input type="radio" name="subjective_intimacy" value="4"> 4: どちらでもない</label>
+                <label><input type="radio" name="subjective_intimacy" value="5"> 5: どちらかと言えば親しい</label>
+                <label><input type="radio" name="subjective_intimacy" value="6"> 6: やや親しい</label>
+                <label><input type="radio" name="subjective_intimacy" value="7"> 7: 非常に親しい</label>
+            </div>
+        </div>
+
+        <button type="button" onclick="startBlockChat()">このブロックのメッセージ確認を開始する</button>
+    </div>
+
+    <!-- ステップ3: メッセージ確認画面（送信なし・次へボタン） -->
+    <div id="step-chat" class="card hidden">
+        <div class="chat-header">
+            <span id="sender-label">送信者：親しい友人</span>
+        </div>
+        <div class="chat-body" id="chat-body" style="height: 160px; margin-bottom: 15px;"></div>
+        
+        <p style="font-size: 13px; color: #555; text-align: center; margin-bottom: 10px;">上記のメッセージを確認したら、下のボタンを押して印象の評価へお進みください。</p>
+        <button type="button" onclick="handleNextFromMessage()">メッセージを確認した（印象評価へ進む）</button>
+    </div>
+
+    <!-- ステップ4: 印象評定画面（7点ラジオボタン選択式） -->
+    <div id="step-evaluation" class="card hidden">
+        <h3>メッセージの印象について</h3>
+        
+        <p style="margin-top: 15px; font-weight: bold;">1. 受取ったメッセージの直感的な印象を選んでください。</p>
+        <div class="radio-scale-group">
+            <label><input type="radio" name="impression" value="1"> 1: 非常にネガティブ</label>
+            <label><input type="radio" name="impression" value="2"> 2: ややネガティブ</label>
+            <label><input type="radio" name="impression" value="3"> 3: どちらかと言えばネガティブ</label>
+            <label><input type="radio" name="impression" value="4"> 4: どちらでもない</label>
+            <label><input type="radio" name="impression" value="5"> 5: どちらかと言えばポジティブ</label>
+            <label><input type="radio" name="impression" value="6"> 6: ややポジティブ</label>
+            <label><input type="radio" name="impression" value="7"> 7: 非常にポジティブ</label>
+        </div>
+
+        <p style="margin-top: 20px; font-weight: bold;">2. 相手はどのような意図で送信したと思いますか？</p>
+        <div class="radio-scale-group">
+            <label><input type="radio" name="intent" value="1"> 1: 強い悪意・皮肉</label>
+            <label><input type="radio" name="intent" value="2"> 2: やや悪意・皮肉がある</label>
+            <label><input type="radio" name="intent" value="3"> 3: どちらかと言えば悪意・皮肉</label>
+            <label><input type="radio" name="intent" value="4"> 4: どちらでもない</label>
+            <label><input type="radio" name="intent" value="5"> 5: どちらかと言えば好意</label>
+            <label><input type="radio" name="intent" value="6"> 6: やや好意がある</label>
+            <label><input type="radio" name="intent" value="7"> 7: 純粋な好意</label>
+        </div>
+
+        <p style="margin-top: 20px; font-weight: bold;">3. 感想・補足（任意）</p>
+        <textarea id="free-comment" rows="3" placeholder="自由に記述してください"></textarea>
+
+        <button type="button" onclick="submitEvaluation()">次のメッセージへ</button>
+    </div>
+
+    <!-- ステップ5: 事後アンケート（頻度・絵文字使用頻度） -->
+    <div id="step-post-survey" class="card hidden">
+        <h2>事後アンケート</h2>
+        
+        <p style="font-weight: bold; margin-bottom: 8px;">1. 各送信者と、普段どのくらいの頻度でテキストコミュニケーションをとっていますか？</p>
+        
+        <label>親しい友人との頻度：
+            <select id="freq-friend">
+                <option value="daily">ほぼ毎日</option>
+                <option value="weekly">週に数回</option>
+                <option value="monthly">月に数回</option>
+                <option value="rarely">滅多にしない</option>
+            </select>
+        </label>
+
+        <label>普通に話す友人との頻度：
+            <select id="freq-classmate">
+                <option value="daily">ほぼ毎日</option>
+                <option value="weekly">週に数回</option>
+                <option value="monthly">月に数回</option>
+                <option value="rarely">滅多にしない</option>
+            </select>
+        </label>
+
+        <label>あまり話さないクラスメイトとの頻度：
+            <select id="freq-acquaintance">
+                <option value="daily">ほぼ毎日</option>
+                <option value="weekly">週に数回</option>
+                <option value="monthly">月に数回</option>
+                <option value="rarely">滅多にしない</option>
+            </select>
+        </label>
+
+        <p style="font-weight: bold; margin-top: 20px; margin-bottom: 8px;">2. 現実のテキストコミュニケーションにおいて、あなたはどのくらい絵文字や顔文字を使用しますか？</p>
+        <div class="radio-scale-group">
+            <label><input type="radio" name="emoji_usage" value="1"> 1: ほとんど使わない</label>
+            <label><input type="radio" name="emoji_usage" value="2"> 2: あまり使わない</label>
+            <label><input type="radio" name="emoji_usage" value="3"> 3: どちらかと言えば使わない</label>
+            <label><input type="radio" name="emoji_usage" value="4"> 4: どちらでもない</label>
+            <label><input type="radio" name="emoji_usage" value="5"> 5: どちらかと言えば使う</label>
+            <label><input type="radio" name="emoji_usage" value="6"> 6: よく使う</label>
+            <label><input type="radio" name="emoji_usage" value="7"> 7: 非常に頻繁に使う</label>
+        </div>
+
+        <button type="button" onclick="submitPostSurvey()">社交不安アンケートへ進む</button>
+    </div>
+
+    <!-- ステップ6: 心理尺度アンケート（LSAS-J 全24項目） -->
+    <div id="step-lsas" class="card hidden">
+        <h2>心理尺度アンケート（LSAS-J）</h2>
+        <p class="instruction">以下の24の状況について、過去1週間における「恐怖・不安の程度」と「回避（避ける）行動の程度」をそれぞれ選択してください。</p>
+        
+        <!-- ★クレジット表記を追加★ -->
+        <p style="font-size: 11px; color: #777; margin-top: -8px; margin-bottom: 15px; border-left: 2px solid #ccc; padding-left: 8px;">
+            ※本研究では、Liebowitz Social Anxiety Scale 日本語版（LSAS-J; 朝倉ほか, 2002）を使用しています。
+        </p>
+        
+        <div id="lsas-questions"></div>
+
+        <button type="button" onclick="finishExperiment()">実験を終了してデータを送信する</button>
+    </div>
+
+    <!-- ステップ7: 終了画面 -->
+    <div id="step-thanks" class="card hidden">
+        <h2>ご協力ありがとうございました！</h2>
+        <p>実験データは正常に送信されました。</p>
+        <p>本実験で収集されたデータは完全に匿名化され、学術研究以外の目的で使用されることはありません。</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
