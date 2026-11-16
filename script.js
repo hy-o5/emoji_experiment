@@ -46,7 +46,7 @@ const messageSets = {
         ],
         ambiguous: [
             { id: "曖昧07", text: "今日の授業面白かった〜😮" },
-            { id: "曖昧08", text: "新しい髪型似合ってた🤔" },
+            { id: "曖昧08", text: "今日の髪型似合ってた🤔" }, 
             { id: "曖昧09", text: "さっきはありがとう😶" }
         ]
     }
@@ -58,14 +58,13 @@ const counterbalancedLists = [
     { friend: "C", classmate: "A", acquaintance: "B" }  // List 3
 ];
 
-// 6通りの送信者提示パターン（ローテーション用）
 const senderOrderPatterns = [
-    ["friend", "classmate", "acquaintance"], // パターン1
-    ["friend", "acquaintance", "classmate"], // パターン2
-    ["classmate", "friend", "acquaintance"], // パターン3
-    ["classmate", "acquaintance", "friend"], // パターン4
-    ["acquaintance", "friend", "classmate"], // パターン5
-    ["acquaintance", "classmate", "friend"]  // パターン6
+    ["friend", "classmate", "acquaintance"],
+    ["friend", "acquaintance", "classmate"],
+    ["classmate", "friend", "acquaintance"],
+    ["classmate", "acquaintance", "friend"],
+    ["acquaintance", "friend", "classmate"],
+    ["acquaintance", "classmate", "friend"]
 ];
 
 let assignedList = null; 
@@ -103,9 +102,8 @@ const lsasQuestions = [
 
 const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyGkdjuXD9rOthXWT2SMWqgA8jtXcd35flZwdYHYimQF9VA0nweWp6B4WN_yRoC3njZ/exec"; 
 
-// ページ読み込み時にサーバー（GAS）からローテーション割り当てを取得する
 document.addEventListener("DOMContentLoaded", () => {
-    // LSASの生成
+    // LSASの生成（論文Table 2の正式な選択肢文言に準拠）
     const lsasContainer = document.getElementById("lsas-questions");
     if (lsasContainer) {
         lsasContainer.innerHTML = "";
@@ -117,14 +115,20 @@ document.addEventListener("DOMContentLoaded", () => {
             div.innerHTML = `
                 <p style="font-size:13px; font-weight:bold; margin: 4px 0;">${q}</p>
                 <div style="font-size:12px; display:flex; gap:12px; flex-wrap:wrap; margin-top:4px;">
-                    <label>不安・恐怖: 
+                    <label>恐怖感/不安感: 
                         <select id="lsas-fear-${index}" required style="padding:2px 4px;">
-                            <option value="0">0: なし</option><option value="1">1: 軽度</option><option value="2">2: 中等度</option><option value="3">3: 重度</option>
+                            <option value="0">0: 全く感じない</option>
+                            <option value="1">1: 少しは感じる</option>
+                            <option value="2">2: はっきりと感じる</option>
+                            <option value="3">3: 非常に強く感じる</option>
                         </select>
                     </label>
                     <label>回避行動: 
                         <select id="lsas-avoid-${index}" required style="padding:2px 4px;">
-                            <option value="0">0: なし(0%)</option><option value="1">1: たまに(1-33%)</option><option value="2">2: よく(33-67%)</option><option value="3">3: 通常(67-100%)</option>
+                            <option value="0">0: 全く回避しない</option>
+                            <option value="1">1: 回避する(1/3以下)</option>
+                            <option value="2">2: 回避する(1/2程度)</option>
+                            <option value="3">3: 回避する(2/3以上)</option>
                         </select>
                     </label>
                 </div>
@@ -133,7 +137,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // サーバーからローテーション順を取得
     fetch(GAS_WEB_APP_URL)
         .then(res => res.json())
         .then(data => {
@@ -143,7 +146,6 @@ document.addEventListener("DOMContentLoaded", () => {
             
             assignedList = counterbalancedLists[data.list_id - 1];
             assignedSenderOrder = senderOrderPatterns[data.sender_order_id - 1];
-            console.log(`割り振られたList: ${data.list_id}, 提示順: ${data.sender_order_id}, 18パターンID: ${experimentData.pattern_18_id}`);
         })
         .catch(err => {
             console.error("ローテーション取得失敗、ランダムフォールバック:", err);
@@ -157,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
             assignedList = counterbalancedLists[listIdx];
             assignedSenderOrder = senderOrderPatterns[senderOrderIdx];
         });
-}); // ← ここでDOMContentLoadedが正しく閉じます
+});
 
 function startSurvey() {
     document.getElementById("step-opening").classList.add("hidden");
@@ -175,9 +177,7 @@ function goToInstruction() {
     }
 
     experimentData.demographics = { age: age, gender: gender };
-
     buildTrialQueue();
-
     currentTrialIndex = 0;
     document.getElementById("step-demographics").classList.add("hidden");
     showBlockInstruction();
@@ -191,12 +191,11 @@ function buildTrialQueue() {
     };
 
     const senders = assignedSenderOrder.map(key => senderDefs[key]);
-
     trialQueue = [];
+
     senders.forEach(sender => {
         const targetSet = messageSets[sender.setKey];
         let blockTrials = [];
-
         const condMap = { consistent: "一致", inconsistent: "不一致", ambiguous: "曖昧" };
 
         ["consistent", "inconsistent", "ambiguous"].forEach(cond => {
@@ -369,16 +368,29 @@ function submitPostSurvey() {
 function finishExperiment() {
     let totalFear = 0;
     let totalAvoid = 0;
+    const lsasItems = [];
 
     for (let i = 0; i < lsasQuestions.length; i++) {
-        totalFear += parseInt(document.getElementById(`lsas-fear-${i}`).value);
-        totalAvoid += parseInt(document.getElementById(`lsas-avoid-${i}`).value);
+        const fearVal = parseInt(document.getElementById(`lsas-fear-${i}`).value);
+        const avoidVal = parseInt(document.getElementById(`lsas-avoid-${i}`).value);
+        
+        totalFear += fearVal;
+        totalAvoid += avoidVal;
+
+        // 各項目の個別回答を保存
+        lsasItems.push({
+            item_no: i + 1,
+            item_name: lsasQuestions[i],
+            fear: fearVal,
+            avoid: avoidVal
+        });
     }
 
     experimentData.lsas = {
         fear: totalFear,
         avoid: totalAvoid,
-        total: totalFear + totalAvoid
+        total: totalFear + totalAvoid,
+        items: lsasItems // 項目ごとの個別回答データ
     };
 
     document.getElementById("step-lsas").classList.add("hidden");
