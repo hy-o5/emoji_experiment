@@ -185,9 +185,9 @@ function goToInstruction() {
 
 function buildTrialQueue() {
     const senderDefs = {
-        friend: { key: "friend", roleName: "親友（何でも話せる最も親しい友人）", nameShort: "親友", setKey: assignedList.friend },
-        classmate: { key: "classmate", roleName: "普通に話す友人（よく一緒に過ごす友人）", nameShort: "友人", setKey: assignedList.classmate },
-        acquaintance: { key: "acquaintance", roleName: "あまり話さないクラスメイト（顔見知り程度の友人）", nameShort: "知人", setKey: assignedList.acquaintance }
+        friend: { key: "friend", roleName: "親密な友人（何でも話せる最も親しい友人）", nameShort: "親友", setKey: assignedList.friend },
+        classmate: { key: "classmate", roleName: "一般的な友人（よく一緒に過ごす友人）", nameShort: "友人", setKey: assignedList.classmate },
+        acquaintance: { key: "acquaintance", roleName: "顔見知り程度の友人（顔見知り程度の友人）", nameShort: "知人", setKey: assignedList.acquaintance }
     };
 
     const senders = assignedSenderOrder.map(key => senderDefs[key]);
@@ -237,13 +237,13 @@ function showBlockInstruction() {
     titleEl.textContent = `【送信者：${currentTrial.roleName.split('（')[0]}】`;
 
     if (currentBlockSenderKey === "friend") {
-        textEl.innerHTML = "これから<strong>「親友（何でも気軽に話せる、自分にとって最も親しい友人）」</strong>からのメッセージが届きます（全9件）。自分のプライベートなことや本音を包み隠さず話せる、一番仲の良い友人の姿を一人頭の中で強くイメージしてください。";
+        textEl.innerHTML = "これから<strong>「親密な友人（何でも気軽に話せる、自分にとって最も親しい友人）」</strong>からのメッセージが届きます（全9件）。自分のプライベートなことや本音を包み隠さず話せる、一番仲の良い友人の姿を一人頭の中で強くイメージしてください。";
         qTitleEl.textContent = "Q. イメージしたその友人と、普段どのくらい親しいですか？（1: 全く親しくない 〜 7: 非常に親しい）";
     } else if (currentBlockSenderKey === "classmate") {
-        textEl.innerHTML = "これから<strong>「普通に話す友人（大学でよく一緒に行動したり授業で頻繁に雑談したりする友人）」</strong>からのメッセージが届きます（全9件）。特別に深い相談はしないけれど楽しくお喋りする、ちょうどいい距離感の友人の姿を一人頭の中で強くイメージしてください。";
+        textEl.innerHTML = "これから<strong>「一般的な友人（大学でよく一緒に行動したり授業で頻繁に雑談したりする友人）」</strong>からのメッセージが届きます（全9件）。特別に深い相談はしないけれど楽しくお喋りする、ちょうどいい距離感の友人の姿を一人頭の中で強くイメージしてください。";
         qTitleEl.textContent = "Q. イメージしたその友人と、普段どのくらい親しいですか？（1: 全く親しくない 〜 7: 非常に親しい）";
     } else if (currentBlockSenderKey === "acquaintance") {
-        textEl.innerHTML = "これから<strong>「あまり話さないクラスメイト（同じクラスや講義にいるけれど、自分から積極的に話しかけることは少ない友人）」</strong>からのメッセージが届きます（全9件）。挨拶や必要な連絡はするもののプライベートで連絡を取り合うほどではない、少し距離感のあるクラスメイトの姿を一人頭の中で強くイメージしてください。";
+        textEl.innerHTML = "これから<strong>「顔見知り程度の友人（同じクラスや講義にいるけれど、自分から積極的に話しかけることは少ない友人）」</strong>からのメッセージが届きます（全9件）。挨拶や必要な連絡はするもののプライベートで連絡を取り合うほどではない、少し距離感のある友人の姿を一人頭の中で強くイメージしてください。";
         qTitleEl.textContent = "Q. イメージしたそのクラスメイトと、普段どのくらい親しいですか？（1: 全く親しくない 〜 7: 非常に親しい）";
     }
 
